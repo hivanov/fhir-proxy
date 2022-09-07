@@ -28,17 +28,28 @@
             document.getElementsByTagName("pre")[0].innerText += txt + "\n";
         }
 
-        FHIR.oauth2.ready(function(client) {
-            client.patient.read().then(
-                function(patient){
+        (
+            async function boo() {
+                let client;
+                try {
+                    client = await FHIR.oauth2.ready();
+                } catch (error) {
+                    console.error('Error during authentication:')
+                    console.error(error);
+                    return;
+                }
+                console.log('Oh. Oh! We have authenticated!!1!');
+                try {
+                    const patient = await client.patient.read();
                     $('#patientfield').val(JSON.stringify(patient, null, 4));
                     $('#tokenresponsefield').val(JSON.stringify(client.state.tokenResponse, null, 4));
-                },
-                function(error){
-                    console.log("Error:\n" + error);
+                } catch (error) {
+                    console.error('Error while fetching patient data:');
+                    console.error(error);
+                    return;
                 }
-            );
-        });
+            }
+        )()
     </script>
 
     </body>
